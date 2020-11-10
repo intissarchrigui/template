@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule ,CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-
+import {HttpClientModule} from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {HomeComponent} from './shared/home/home.component';
@@ -9,6 +9,7 @@ import {FooterComponent} from './shared/home/footer/footer.component';
 import {ContainerComponent} from './shared/home/container/container.component';
 import {LoginComponent} from './front/login/login.component';
 import {RegisterComponent} from './front/register/register.component'
+import { ReactiveFormsModule ,FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,8 +22,8 @@ import {RegisterComponent} from './front/register/register.component'
 
   ],
   imports: [
-    BrowserModule,
-    AppRoutingModule
+    BrowserModule,ReactiveFormsModule,FormsModule ,
+    AppRoutingModule,HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent],
