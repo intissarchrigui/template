@@ -7,6 +7,7 @@ import {ContainerComponent} from './shared/home/container/container.component';
 import { ListeDemandeComponent } from './back/liste-demande/liste-demande.component';
 import { AuthGuard } from './front/guards/auth.guard';
 import { ListmembersComponent } from './back/listmembers/listmembers.component';
+import {DetailsmembreComponent} from './back/listmembers/detailsmembre/detailsmembre.component'
 const routes: Routes = [{
   path: '',
   component: HomeComponent
@@ -14,7 +15,9 @@ const routes: Routes = [{
   children: [
     {path: '', component: ContainerComponent},
     {path: 'listmembers', component: ListmembersComponent,canActivate:[AuthGuard]},
-    {path: 'listeDemandes', component: ListeDemandeComponent,canActivate:[AuthGuard]}
+    {path: 'listeDemandes', component: ListeDemandeComponent,canActivate:[AuthGuard]},
+    {path: 'detailsMember/:idMember', component: DetailsmembreComponent,canActivate:[AuthGuard]}
+
 
 
   ]

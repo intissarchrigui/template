@@ -8,12 +8,12 @@ import { Router } from '@angular/router';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-
+  role;
   isLoggedIn : Boolean ;
   constructor(private loginservice: LoginService,  private router: Router) { }
 
   ngOnInit(): void {
-
+this.role= sessionStorage.getItem('role')
     this.isLoggedIn= this.loginservice.isLoggedIn();
   }
    logout(){

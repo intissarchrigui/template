@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import routes from './src/Routes/routes';
 const app = express();
 const cors = require('cors');
-const PORT =8000 ;
+const PORT =8080 ;
 var serveStatic = require('serve-static');
 var path = require('path');
 const morgan = require('morgan');

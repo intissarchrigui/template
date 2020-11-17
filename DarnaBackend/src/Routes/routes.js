@@ -11,7 +11,8 @@ import {
     deleteMember,
     UpdateMember,
     addimage,
-    download
+    download,
+    BannirMember
 
 } from '../Controllers/controllers'
 
@@ -44,9 +45,10 @@ const routes = (app) => {
     app.route('/api/deleteMember/:id')
     .delete(deleteMember)
 
-    app.route('/api/updateMember')
+    app.route('/api/UpdateMember/:id')
     .put(UpdateMember)
-
+    app.route('/api/bannirmember/:id')
+    .put(BannirMember)  
     //public routes
 
     app.route('/api/login')

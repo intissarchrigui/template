@@ -9,7 +9,7 @@ export class LoginService {
   jwt: string;
   username: string;
   role;
-  private host = 'http://localhost:8000';
+  private host = 'http://localhost:8080';
   constructor(private http: HttpClient ,private router:Router) { }
 
   login(data)

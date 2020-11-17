@@ -104,15 +104,6 @@ export const AccepterDemande = (req, res) => {
     })
      
     
-    // newuser.copyTo(User)
-    // User.create({
-    //   'NomPrenom':newuser.NomPrenom
-    //   stu
-    // })
-    // console.log(nuser)
-    // // neuser._id = new ObjectId(); 
-    
-    
     }
 
 //get toutes les demandes
@@ -186,11 +177,16 @@ res.send(err);
     })
 };
 export const getAllMember =  (req, res) => {
-  User.find({},(err, user) => {
+  User.find({},(err,user) => {
     if (err){
 res.send(err);
     }
-res.json(user);
+    console.log("this is res liste member")
+
+  // console.log(res)
+    res.json(user);
+
+
  });
 };
 //affisher details d'un membre
@@ -232,26 +228,54 @@ User.deleteOne({'_id':ObjectId(id) })
 };
 //modifier member
 export const UpdateMember = (req, res) => {
-  let user= new User(req.body);
-  User.updateOne({'_id': req.body._id}, user)
-    .then(() => {
-      if (!user) {
-        return res.status(404).send({
-          message: "no member found",
-        });
+  const id = req.params.id;
+ // const ObjectId  = require('mongodb').ObjectID;
+User.findByIdAndUpdate({_id:id} ,req.body,{new:true}, (err,user) => {
+if (err ){
+  res.send(err)
+}
+res.json(user)
+}
+)
+ 
+    // let user=new User(req.body);
+  // User.updateOne({'_id': req.body._id}, user)
+   
+  //     if (!user) {
+  //       return res.status(404).send({
+  //         message: "no member found",
+  //       });
     
-      }
-      res.json(user);
-        })
-    .catch((err) => {
-      return res.status(404).send({
-        message: "error while updating the post",
-      });
+  //     }
+  //     user.save((err, user) => {
+  //       if (err){
+  //        res.send(err);
+  //       }else{
+  //       res.json({
+  //        "code": "206","msg":"user added successfuly"
+  //      });
+       
+  //     }
+      
+  // });
+}
+export const BannirMember =(req,res) => {
+  const id = req.params.id;
+const ObjectId  = require('mongodb').ObjectID;
+User.findOne({'_id':ObjectId(id) })
+  .then((user) => {
+    if (user.statut=="actif") {
+     user.statut="banni"
+    
+    user.save()
+    res.send({ message: "member banni" });
+  }else  {
+    res.send({ message: "error canno't make this action" });
+    
+  }
+})
   
-     
-    });
-};
-
+}
 
 //login
 export const loginmember = (req, res) => {

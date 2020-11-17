@@ -8,7 +8,7 @@ import {Observable} from 'rxjs';
 export class ImageService {
 
 
-  private host = 'http://localhost:8000';
+  private host = 'http://localhost:8080';
   constructor(private http: HttpClient) { }
   pushFileToStorage(file: File): Observable<HttpEvent<{}>> {
     const formdata: FormData = new FormData();

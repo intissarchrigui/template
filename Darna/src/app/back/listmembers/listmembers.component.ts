@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { TemplateRef } from '@angular/core';
-
 import { FormGroup,FormBuilder, Validators} from '@angular/forms';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import {ListMemberService} from '../service/list-Member.service'
 import {BsModalRef, BsModalService} from 'ngx-bootstrap/modal';
+import { ImageService } from 'src/app/front/services/image.service';
+import { NgxSpinnerService } from "ngx-spinner";
 export class Member{
   _id;
   NomPrenom;
@@ -13,7 +14,9 @@ export class Member{
  Tel;
  DateNaissance ;
  Job;
- photo
+ role;
+ statut;
+ photo;
  }
 
 @Component({
@@ -30,8 +33,11 @@ export class ListmembersComponent implements OnInit {
   currentMember :Member;
   public listMembers:any;
   modalRef: BsModalRef;
-
-  constructor( private router: Router , private formBuilder: FormBuilder, private listMemberService: ListMemberService, private modalService: BsModalService ) { }
+  filesToUpload: Array<File>;
+  photo;
+  pm;
+  memberValue;
+  constructor( private router: Router , private formBuilder: FormBuilder, private listMemberService: ListMemberService, private modalService: BsModalService , private imageservice: ImageService, private SpinnerService: NgxSpinnerService) { }
   openModal(template: TemplateRef<any>) {
     this.modalRef = this.modalService.show(template);
   }
@@ -44,24 +50,28 @@ export class ListmembersComponent implements OnInit {
       Tel:[null,[Validators.required,Validators.pattern(/^[0-9]\d*$/),Validators.minLength(8)]],
       DateNaissance:[null,Validators.required],
       Job:[null,Validators.required],
-      Adresse:[null,Validators.required],
-      Password:[null,[Validators.required, Validators.minLength(6)]],
+      Password:[null,[Validators.required, Validators.minLength(6)]]
+
     },),
     this.updateForm= this.formBuilder.group({
       NomPrenom:[null,Validators.required],
       Email:[null, [Validators.required, Validators.email]],
       Tel:[null,[Validators.required,Validators.pattern(/^[0-9]\d*$/),Validators.minLength(8)]],
       DateNaissance:[null,Validators.required],
-      Job:[null,Validators.required],
+      Job:[null,Validators.required]
       // Adresse:[this.currentMember.Adresse,Validators.required],
     });
   }
 
   getListMembers(){
+    this.SpinnerService.show();
     this.listMemberService.getAllmembers().subscribe((res: any) => {
-      this.members=res;
+      console.log(res)
+        this.members= res.filter(t=>t.role ==="member");
+        this.SpinnerService.hide();
     }
-      );
+    );
+
   }
 
 get f() {
@@ -95,19 +105,32 @@ DeleteMember(_id){
   });
 
 }
-
+recuperFile(file){
+  this.filesToUpload = (file.target.files as Array<File>);
+  this.photo = file.target.files[0].photo;
+}
 
 AjouterMember() {
-      const obj= this.addForm.value ;
-      this.submitted = true;
-      console.log("hello this is add form")
-      console.log(obj);
-      // stop here if form is invalid
-      if (this.addForm.invalid) {
-        return;
-      }
+  const data = {
+    NomPrenom: this.addForm.value.NomPrenom,
+    Email: this.addForm.value.Email,
+    Tel: this.addForm.value.Tel,
+    DateNaissance: this.addForm.value.DateNaissance,
+    Job: this.addForm.value.Job,
+    Password: this.addForm.value.Password,
+    photo: this.filesToUpload[0].name
+  };
+  this.submitted = true;
 
-      this.listMemberService.AddMember(obj).subscribe(res => {
+  // stop here if form is invalid
+  if (this.addForm.invalid) {
+    return;
+  }
+
+      this.listMemberService.AddMember(data).subscribe(res => {
+        this.imageservice.pushFileToStorage(this.filesToUpload[0]).subscribe(rest => {
+          console.log(rest);
+
            if (res["code"]==505){
             Swal.fire({
               icon: 'error',
@@ -121,11 +144,12 @@ AjouterMember() {
               'success'
             );
 
-            // this.getListMembers();
-            window.location.reload();
+             this.getListMembers();
+             this.modalRef.hide();
+
 
           }
-
+        });
     });
 
 
@@ -134,8 +158,7 @@ AjouterMember() {
 getMemberByid(id){
       this.listMemberService.getMember(id).subscribe((res:Member) => {
         this.currentMember=res
-        console.log("hello hehi get by id")
-
+        this.currentMember.DateNaissance=res.DateNaissance.substring(0,10);
         console.log(this.currentMember)
         console.log(this.currentMember.DateNaissance)
 
@@ -146,13 +169,18 @@ getMemberByid(id){
     }
 
     ModifierMember() {
-      this.listMemberService.updateMember(this.currentMember).subscribe(
+
+      this.listMemberService.updateMember(this.currentMember._id,this.updateForm.value).subscribe(
           response => {
             console.log(response);
             Swal.fire(
               'Ce Member a été modifié avec succés',
+              '',
               'success'
-            );          },
+            );
+            this.getListMembers();
+            this.modalRef.hide();
+          },
           error => {
             console.log(error);
           });

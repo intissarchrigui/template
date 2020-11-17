@@ -34,7 +34,7 @@ export class RegisterComponent implements OnInit {
     let isLoggedIn= this.registerservice.isLoggedIn();
 
     if (isLoggedIn) {
-      this.router.navigate(['/listmember']);
+      this.router.navigate(['/listmembers']);
     }
   }
   get f() {
