@@ -21,7 +21,7 @@ export class RegisterComponent implements OnInit {
   InscriptionForm: FormGroup;
   submitted = false;
   photo;
-  filee: Array<File>;
+  filesToUpload: Array<File>;
   imageSrc;
 
 
@@ -70,14 +70,13 @@ export class RegisterComponent implements OnInit {
   }
   readURL(event): void {
     if (event.target.files && event.target.files[0]) {
-        const file= event.target.files[0];
+        const file = event.target.files[0];
 
         const reader = new FileReader();
         reader.onload = e => this.imageSrc = reader.result;
 
         reader.readAsDataURL(file);
-        this.filee =event.target.files as Array<File>;
-       // this.filesToUpload = event.target.files as Array<File>;
+        this.filesToUpload = event.target.files as Array<File>;
         this.photo = event.target.files[0].photo;
     }
 }
@@ -98,7 +97,7 @@ export class RegisterComponent implements OnInit {
     this.registerservice.postdemand(this.InscriptionForm.value).subscribe((res) => {
       console.log(res);
       this.imageservice
-        .pushFileToStorage(this.filee[0])
+        .pushFileToStorage(this.filesToUpload[0])
         .subscribe((rest) => {
           console.log(rest);
         });
